@@ -43,7 +43,6 @@ public class State {
             getHumanPlayer().getPockets()[i].setPieces(stateArray[i]);
         }
         getHumanPlayer().getStore().setPieces(stateArray[GameSettings.POCKETS]);
-//        state.getHumanPlayer().getStore().setPieces(999);
 
         for (int i = 7; i <= GameSettings.POCKETS * 2; i++) {
            getAIPlayer().getPockets()[i - GameSettings.POCKETS - 1].setPieces(stateArray[i]);
@@ -52,7 +51,6 @@ public class State {
     }
 
     public int[] getStateArray() {
-//        stateArray = new int[GameSettings.POCKETS * 2 + 2];
         for (int i = 0; i < GameSettings.POCKETS; i++) {
             stateArray[i] = getHumanPlayer().getPockets()[i].getPieces();
         }

@@ -12,7 +12,6 @@ public class AI {
 
     public int minimax(State state) {
 
-
         State originalState = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
         originalState.setStateArray(state.getStateArray());
 
@@ -23,32 +22,21 @@ public class AI {
                 minValueCount = 0;
                 depth = GameSettings.searchDepth;
                 minValue(result(state, i));
-
-
                 utilityArray[i] = utility(state);
-                System.out.println("Utility of action " + i + " is: " + utility(state));
-                System.out.println("depth: " + depth);
                 state.setStateArray(originalState.getStateArray());
             }
             else {
                 utilityArray[i] = -999;
             }
         }
-
-
         state.setStateArray(originalState.getStateArray());
-
         int aiAction = optimalAction(utilityArray);
-
-        System.out.println(aiAction);
+        //System.out.println(aiAction);
         return aiAction;
     }
 
     private int optimalAction(int[] utilityArray) {
 
-        for (int i = 0; i < 6; i++) {
-            System.out.println(utilityArray[i]);
-        }
 
         int a = utilityArray[0];
         int b = 0;
@@ -59,7 +47,6 @@ public class AI {
                 a = utilityArray[i];
                 b = i;
             }
-
         }
         return b;
     }
@@ -67,18 +54,15 @@ public class AI {
 
     private int maxValue(State state) {
         if (terminalTest(state, depth)) {
-//            System.out.println(utility(state));
             return utility(state);
         }
 
-//        System.out.println("maxValueCount: " + maxValueCount);
         maxValueCount += 1;
         depth -= 1;
 
         int maxEval = -99999;
         for (int i = 0; i < GameSettings.POCKETS; i++) {
             if (state.getStateArray()[i] != 0) {
-
 
                 State stateBuffer = result(state, i);
 
@@ -90,18 +74,13 @@ public class AI {
                 }
             }
         }
-
-
         return maxEval;
     }
 
     private int minValue(State state) {
         if (terminalTest(state, depth)) {
-//            System.out.println(utility(state));
             return utility(state);
         }
-
-//        System.out.println("minValueCount: " + minValueCount);
         minValueCount += 1;
         depth -= 1;
 
@@ -119,10 +98,6 @@ public class AI {
                 }
             }
         }
-
-
-
-
 
         return 0;
     }
@@ -160,12 +135,6 @@ public class AI {
         else return b;
     }
 
-
-
-
-
-
-
     private int utility(State state) {
 
         return state.getAIPlayer().getStore().getPieces() - state.getHumanPlayer().getStore().getPieces();
@@ -188,8 +157,6 @@ public class AI {
 
         return false;
     }
-
-
 
     private State playTurnResult(State state, int action) {
 

@@ -4,7 +4,6 @@ public class Player {
     private Store store;
     private Pocket[] pockets;
 
-
     public Player(String playerName, Store store, Pocket[] pockets) {
         this.playerName = playerName;
         this.store = store;

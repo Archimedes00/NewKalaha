@@ -2,36 +2,20 @@ import java.util.Scanner;
 
 public class GameController {
 
-
-//    private int POCKETS;
-//    private int PIECES_IN_POCKETS;
-//    private Player[] PLAYERS;
-//    private Player[] BUFFER_PLAYERS;
-//    private String[] PLAYER_NAMES;
     private State state;
-
-    private State stateBuffer;
-
     private AI ai;
-//    private int[] boardState;
+
     public GameController(Player[] players) {
-//        this.PLAYERS = players;
         this.ai = new AI(GameSettings.searchDepth);
         state = new State(players[0], players[1]);
-
-        //        stateArray = new int[GameSettings.POCKETS * 2 + 2];
-
-
     }
 
     public void startGame() {
-
         choosePlayerOne();
-
 //        boardState = new int[]{4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0};
 //        state.setStateArray(boardState);
-
         drawBoard(state);
+
         while (!isGameOver(state)) {
 
             if (state.isHumanPlayerTurn()) {
@@ -41,16 +25,20 @@ public class GameController {
                 state.setHumanPlayerTurn(false);
             } else {
 
-
-                playAITurn(ai.minimax(state));
+                int action = ai.minimax(state);
+                playAITurn(action);
                 state.setHumanPlayerTurn(true);
-                System.out.println("\nAI played :)");
+                System.out.println("\nAI played: B" + (action + 1));
             }
             drawBoard(state);
         }
 
         calculateFinalScore(state);
+    }
 
+    private void aiPlayed(int action) {
+
+        System.out.println("\n AI played: B" + action + 1);
     }
 
     private int chooseAction() {
@@ -138,8 +126,6 @@ public class GameController {
         }
 
         state.setStateArray(tempStateArray);
-//        globalState.setState(state);
-        // Tjekker om du rammer din sidste sten i din egen bank, for så at få en ekstra tur
         if ((action + pocketBuffer) % 13 == 6) {
             System.out.println("You succesfully put your last piece in your store. You get another turn!");
             drawBoard(state);
@@ -175,7 +161,6 @@ public class GameController {
 
         state.setStateArray(tempStateArray);
         if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
-            // Dette gøgl virker
             playAITurn(ai.minimax(state));
         }
 
@@ -234,17 +219,19 @@ public class GameController {
     }
 
 
-    private String calculateFinalScore(State state) {
+    private void calculateFinalScore(State state) {
 
         if (state.getStateArray()[6] > state.getStateArray()[13]) {
-            return "Player A has won the game!";
+            System.out.println("Player A has won the game!");
         }
         if (state.getStateArray()[6] == state.getStateArray()[13]) {
-            return "Holy Moly the game is tied!";
+            System.out.println("Holy Moly the game is tied!");
+        } else {
+            System.out.println("AI has won the game!");
         }
-        return "AI has won the game!";
-    }
+        System.out.println("Thanks for playing :)");
 
+    }
 
 
     private boolean isGameOver(State state) {
@@ -263,13 +250,4 @@ public class GameController {
         return false;
     }
 
-
-
-    public State getStateBuffer() {
-        return stateBuffer;
-    }
-
-    public void setStateBuffer(State stateBuffer) {
-        this.stateBuffer = stateBuffer;
-    }
 }
