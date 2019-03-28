@@ -1,6 +1,9 @@
 public class AI {
 
-    private int depth;
+    public int depth;
+    int maxValueCount;
+    int minValueCount;
+    int[] utilityArray = new int[6];
 
 
     public AI(int depth) {
@@ -9,29 +12,67 @@ public class AI {
 
     public int minimax(State state) {
 
-        int[] originalState = state.getStateArray();
+
+        State originalState = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
+        originalState.setStateArray(state.getStateArray());
 
         for (int i = 0; i < GameSettings.POCKETS; i++) {
             if (state.getStateArray()[i + GameSettings.POCKETS + 1] != 0) {
+                state.setStateArray(originalState.getStateArray());
+                maxValueCount = 0;
+                minValueCount = 0;
                 depth = GameSettings.searchDepth;
-                System.out.println("Utility of action " + i + " is: " + minValue(result(state, i)));
+                minValue(result(state, i));
+
+
+                utilityArray[i] = utility(state);
+                System.out.println("Utility of action " + i + " is: " + utility(state));
+                System.out.println("depth: " + depth);
+                state.setStateArray(originalState.getStateArray());
+            }
+            else {
+                utilityArray[i] = -999999;
             }
         }
 
 
-        state.setStateArray(originalState);
+        state.setStateArray(originalState.getStateArray());
 
+        int aiAction = optimalAction(utilityArray);
 
-        return 3;
+        System.out.println(aiAction);
+        return aiAction;
+    }
+
+    private int optimalAction(int[] utilityArray) {
+
+        for (int i = 0; i < 6; i++) {
+            System.out.println(utilityArray[i]);
+        }
+
+        int a = utilityArray[0];
+        int b = 0;
+
+        for (int i = 1; i < utilityArray.length; i++) {
+
+            if (a < utilityArray[i]) {
+                a = utilityArray[i];
+                b = i;
+            }
+
+        }
+        return b;
     }
 
 
     private int maxValue(State state) {
         if (terminalTest(state, depth)) {
+//            System.out.println(utility(state));
             return utility(state);
-
         }
 
+//        System.out.println("maxValueCount: " + maxValueCount);
+        maxValueCount += 1;
         depth -= 1;
 
         int maxEval = -99999;
@@ -56,10 +97,12 @@ public class AI {
 
     private int minValue(State state) {
         if (terminalTest(state, depth)) {
-
+//            System.out.println(utility(state));
             return utility(state);
         }
 
+//        System.out.println("minValueCount: " + minValueCount);
+        minValueCount += 1;
         depth -= 1;
 
         int minEval = 99999;
@@ -123,7 +166,6 @@ public class AI {
 
 
 
-
     private int utility(State state) {
 
         return state.getAIPlayer().getStore().getPieces() - state.getHumanPlayer().getStore().getPieces();
@@ -131,13 +173,11 @@ public class AI {
 
     private boolean terminalTest(State state, int depth) {
 
-        int[] tempStateArray = state.getStateArray();
         int humanBuffer = 0;
         int aiBuffer = 0;
-
         for (int i = 0; i < GameSettings.POCKETS; i++) {
-            humanBuffer = humanBuffer + tempStateArray[i];
-            aiBuffer = aiBuffer + tempStateArray[i + GameSettings.POCKETS + 1];
+            humanBuffer = humanBuffer + state.getStateArray()[i];
+            aiBuffer = aiBuffer + state.getStateArray()[i + GameSettings.POCKETS + 1];
         }
         if (depth == 0) {
             return true;

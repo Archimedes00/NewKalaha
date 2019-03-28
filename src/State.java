@@ -5,9 +5,6 @@ public class State {
     private boolean humanPlayerTurn;
     private int[] stateArray;
 
-    public State() {
-
-    }
 
     public State(Player humanPlayer, Player AIPlayer) {
         this.humanPlayer = humanPlayer;

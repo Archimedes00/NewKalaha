@@ -6,12 +6,15 @@ public class GameController {
     private int POCKETS;
     private int PIECES_IN_POCKETS;
     private Player[] PLAYERS;
+    private Player[] BUFFER_PLAYERS;
     private String[] PLAYER_NAMES;
     private State state;
+
+    private State stateBuffer;
+
     private int[] stateArray;
     private AI ai;
     private int[] boardState;
-
     public GameController(Player[] players) {
         this.PLAYERS = players;
         this.ai = new AI(GameSettings.searchDepth);
@@ -254,4 +257,12 @@ public class GameController {
     }
 
 
+
+    public State getStateBuffer() {
+        return stateBuffer;
+    }
+
+    public void setStateBuffer(State stateBuffer) {
+        this.stateBuffer = stateBuffer;
+    }
 }
