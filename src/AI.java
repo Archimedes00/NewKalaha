@@ -31,7 +31,7 @@ public class AI {
                 state.setStateArray(originalState.getStateArray());
             }
             else {
-                utilityArray[i] = -999999;
+                utilityArray[i] = -999;
             }
         }
 

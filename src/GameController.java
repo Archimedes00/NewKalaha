@@ -3,20 +3,19 @@ import java.util.Scanner;
 public class GameController {
 
 
-    private int POCKETS;
-    private int PIECES_IN_POCKETS;
-    private Player[] PLAYERS;
-    private Player[] BUFFER_PLAYERS;
-    private String[] PLAYER_NAMES;
+//    private int POCKETS;
+//    private int PIECES_IN_POCKETS;
+//    private Player[] PLAYERS;
+//    private Player[] BUFFER_PLAYERS;
+//    private String[] PLAYER_NAMES;
     private State state;
 
     private State stateBuffer;
 
-    private int[] stateArray;
     private AI ai;
-    private int[] boardState;
+//    private int[] boardState;
     public GameController(Player[] players) {
-        this.PLAYERS = players;
+//        this.PLAYERS = players;
         this.ai = new AI(GameSettings.searchDepth);
         state = new State(players[0], players[1]);
 
@@ -27,12 +26,10 @@ public class GameController {
 
     public void startGame() {
 
-        stateArray = new int[GameSettings.POCKETS * 2 + 2];
-
         choosePlayerOne();
 
-        boardState = new int[]{4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0};
-        //state.setStateArray(boardState);
+//        boardState = new int[]{4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0};
+//        state.setStateArray(boardState);
 
         drawBoard(state);
         while (!isGameOver(state)) {
@@ -45,9 +42,9 @@ public class GameController {
             } else {
 
 
-                System.out.println("\nAI played :)");
                 playAITurn(ai.minimax(state));
                 state.setHumanPlayerTurn(true);
+                System.out.println("\nAI played :)");
             }
             drawBoard(state);
         }
@@ -239,19 +236,29 @@ public class GameController {
 
     private String calculateFinalScore(State state) {
 
-//        if (state[6] > state[13]) {
-//            return "Player A has won the game!";
-//        }
-//        if (state[6] == state[13]) {
-//            return "Holy Moly the game is tied!";
-//        }
-//        return "AI has won the game!";
-//    }
-        return "ss";
+        if (state.getStateArray()[6] > state.getStateArray()[13]) {
+            return "Player A has won the game!";
+        }
+        if (state.getStateArray()[6] == state.getStateArray()[13]) {
+            return "Holy Moly the game is tied!";
+        }
+        return "AI has won the game!";
     }
 
 
+
     private boolean isGameOver(State state) {
+
+        int humanBuffer = 0;
+        int aiBuffer = 0;
+        for (int i = 0; i < GameSettings.POCKETS; i++) {
+            humanBuffer = humanBuffer + state.getStateArray()[i];
+            aiBuffer = aiBuffer + state.getStateArray()[i + GameSettings.POCKETS + 1];
+        }
+
+        if (humanBuffer == 0 || aiBuffer == 0) {
+            return true;
+        }
 
         return false;
     }
