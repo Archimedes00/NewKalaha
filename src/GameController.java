@@ -2,16 +2,18 @@ import java.util.Scanner;
 
 public class GameController {
 
-    private State state;
+//    private State state;
     private AI ai;
 
     public GameController(Player[] players) {
         this.ai = new AI(GameSettings.searchDepth);
-        state = new State(players[0], players[1]);
+//        state = new State(players[0], players[1]);
     }
 
     public void startGame() {
-        choosePlayerOne();
+        State state = new State(GameSettings.players[0], GameSettings.players[1]);
+
+        choosePlayerOne(state);
 //        boardState = new int[]{4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0};
 //        state.setStateArray(boardState);
         drawBoard(state);
@@ -21,12 +23,12 @@ public class GameController {
             if (state.isHumanPlayerTurn()) {
 
                 System.out.println("\nIt is your turn :)");
-                playTurn(chooseAction());
+                state = playTurn(state, chooseAction(state));
                 state.setHumanPlayerTurn(false);
             } else {
 
                 int action = ai.minimax2(state, GameSettings.searchDepth);
-                playAITurn(action);
+                state = playAITurn(state, action);
                 state.setHumanPlayerTurn(true);
                 System.out.println("\nAI played: B" + (action + 1));
             }
@@ -41,7 +43,7 @@ public class GameController {
         System.out.println("\n AI played: B" + action + 1);
     }
 
-    private int chooseAction() {
+    private int chooseAction(State state) {
         Scanner input = new Scanner(System.in);
 
 
@@ -103,7 +105,7 @@ public class GameController {
         }
     }
 
-    private void playTurn(int action) {
+    private State playTurn(State state, int action) {
 
 
         int pocketBuffer = state.getHumanPlayer().getPockets()[action].getPieces();
@@ -130,11 +132,12 @@ public class GameController {
             System.out.println("You succesfully put your last piece in your store. You get another turn!");
             drawBoard(state);
 
-            playTurn(chooseAction());
+            state = playTurn(state, chooseAction(state));
         }
+        return state;
     }
 
-    private void playAITurn(int action) {
+    private State playAITurn(State state, int action) {
 
 
         int pocketBuffer = state.getAIPlayer().getPockets()[action].getPieces();
@@ -161,9 +164,9 @@ public class GameController {
 
         state.setStateArray(tempStateArray);
         if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
-            playAITurn(ai.minimax2(state, GameSettings.searchDepth));
+            state = playAITurn(state, ai.minimax2(state, GameSettings.searchDepth));
         }
-
+        return state;
     }
 
 
@@ -203,7 +206,7 @@ public class GameController {
     }
 
 
-    private void choosePlayerOne() {
+    private void choosePlayerOne(State state) {
         System.out.println("\nWelcome to Kalaha. Would you like to make the first move? \t y/n ?");
         Scanner input = new Scanner(System.in);
         String c = input.next();
