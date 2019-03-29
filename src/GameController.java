@@ -25,7 +25,7 @@ public class GameController {
                 state.setHumanPlayerTurn(false);
             } else {
 
-                int action = ai.minimax(state);
+                int action = ai.minimax2(state, GameSettings.searchDepth);
                 playAITurn(action);
                 state.setHumanPlayerTurn(true);
                 System.out.println("\nAI played: B" + (action + 1));
@@ -161,7 +161,7 @@ public class GameController {
 
         state.setStateArray(tempStateArray);
         if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
-            playAITurn(ai.minimax(state));
+            playAITurn(ai.minimax2(state, GameSettings.searchDepth));
         }
 
     }
