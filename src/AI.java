@@ -267,13 +267,15 @@ public class AI {
                     }
                     utilityArray[i] = minEval;
 //                    return minEval;
+
                 }
             }
             else {
                 utilityArray[i] = -999999;
             }
+            state.setStateArray(originalState.getStateArray());
         }
-        state.setStateArray(originalState.getStateArray());
+        state = originalState;
         return optimalAction(utilityArray);
     }
 
