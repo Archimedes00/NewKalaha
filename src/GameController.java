@@ -26,8 +26,9 @@ public class GameController {
                 state = playTurn(state, chooseAction(state));
                 state.setHumanPlayerTurn(false);
             } else {
-
-                int action = ai.minimax2(state, GameSettings.searchDepth);
+                State tempState = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
+                tempState.setStateArray(state.getStateArray());
+                int action = ai.minimax2(tempState, GameSettings.searchDepth);
                 state = playAITurn(state, action);
                 state.setHumanPlayerTurn(true);
                 System.out.println("\nAI played: B" + (action + 1));

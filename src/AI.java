@@ -6,8 +6,7 @@ public class AI {
     int maxValueCount;
     int minValueCount;
     int[] utilityArray = new int[GameSettings.POCKETS];
-
-
+    boolean firstRun = true;
 
 
     public AI(int depth) {
@@ -28,8 +27,7 @@ public class AI {
                 minValue(result(state, i));
                 utilityArray[i] = utility(state);
                 state.setStateArray(originalState.getStateArray());
-            }
-            else {
+            } else {
                 utilityArray[i] = -99999;
             }
         }
@@ -55,8 +53,7 @@ public class AI {
 
                 if (!stateBuffer.isHumanPlayerTurn()) {
                     maxEval = max(maxEval, maxValue(result(state, i)));
-                }
-                else {
+                } else {
                     maxEval = max(maxEval, minValue(result(state, i)));
                 }
             }
@@ -79,8 +76,7 @@ public class AI {
                 State stateBuffer = result(state, i);
                 if (stateBuffer.isHumanPlayerTurn()) {
                     minEval = min(minEval, minValue(result(state, i)));
-                }
-                else {
+                } else {
                     minEval = min(minEval, maxValue(result(state, i)));
                 }
             }
@@ -92,6 +88,10 @@ public class AI {
     private int optimalAction(int[] utilityArray) {
 
 
+        for (int i = 0; i < 6; i++) {
+            System.out.println(utilityArray[i]);
+        }
+        System.out.println();
         int a = utilityArray[0];
         int b = 0;
 
@@ -110,8 +110,7 @@ public class AI {
         State tempStateArray;
         if (state.isHumanPlayerTurn()) {
             tempStateArray = playTurnResult(state, action);
-        }
-        else {
+        } else {
             tempStateArray = playAITurnResult(state, action);
         }
         return tempStateArray;
@@ -120,21 +119,17 @@ public class AI {
     private int max(int a, int b) {
         if (a == b) {
             return a;
-        }
-        else if (a > b) {
+        } else if (a > b) {
             return a;
-        }
-        else return b;
+        } else return b;
     }
 
     private int min(int a, int b) {
         if (a == b) {
             return a;
-        }
-        else if (a < b) {
+        } else if (a < b) {
             return a;
-        }
-        else return b;
+        } else return b;
     }
 
     private int utility(State state) {
@@ -152,8 +147,7 @@ public class AI {
         }
         if (depth == 0) {
             return true;
-        }
-        else if (humanBuffer == 0 || aiBuffer == 0) {
+        } else if (humanBuffer == 0 || aiBuffer == 0) {
             return true;
         }
         return false;
@@ -215,7 +209,7 @@ public class AI {
             }
         }
 
-         state.setStateArray(tempStateArray); /*OG SKAL DET HER VÆRE HER YO!? */
+        state.setStateArray(tempStateArray); /*OG SKAL DET HER VÆRE HER YO!? */
 
         if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
             // Dette gøgl virker
@@ -233,52 +227,48 @@ public class AI {
     /* HER PRØVER VI EN NY MINIMAX FUNKTION */
 
 
-    public int minimax2 (State state, int depth) {
+    public int minimax2(State tempState, int depth) {
 
-        State originalState = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
-        originalState.setStateArray(state.getStateArray());
 
-        if (terminalTest(state, depth)) {
-            state.setStateArray(originalState.getStateArray());
-            return utility(state);
-        }
+//        State tempState = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
+//        tempState.setStateArray(state.getStateArray());
+
 
         for (int i = 0; i < GameSettings.POCKETS; i++) {
 
-            if (state.getStateArray()[i + GameSettings.POCKETS + 1] != 0) {
+            if (tempState.getStateArray()[i + GameSettings.POCKETS + 1] != 0) {
 
-                if (!state.isHumanPlayerTurn()) {
+                if (terminalTest(tempState, depth)) {
+                    utilityArray[i] = utility(tempState);
+                }
+
+                if (!tempState.isHumanPlayerTurn()) {
+
                     int maxEval = -99999;
 
-                    for (State child : childsOfState(state)) {
-                        int eval = minimax2(child, depth - 1);
-                        state.setHumanPlayerTurn(true);
-                        maxEval = max(maxEval, eval);
-                    }
+                    int eval = minimax2(result(tempState, i), depth - 1);
+                    tempState.setHumanPlayerTurn(true);
+                    maxEval = max(maxEval, eval);
+
                     utilityArray[i] = maxEval;
-//                    return maxEval;
                 } else {
+
                     int minEval = 99999;
 
-                    for (State child : childsOfState(state)) {
-                        int eval = minimax2(child, depth - 1);
-                        state.setHumanPlayerTurn(false);
-                        minEval = min(minEval, eval);
-                    }
+                    int eval = minimax2(result(tempState, i), depth - 1);
+                    tempState.setHumanPlayerTurn(false);
+                    minEval = min(minEval, eval);
+
                     utilityArray[i] = minEval;
-//                    return minEval;
 
                 }
-            }
-            else {
+            } else {
                 utilityArray[i] = -999999;
             }
-            state.setStateArray(originalState.getStateArray());
+
         }
-        state = originalState;
         return optimalAction(utilityArray);
     }
-
 
 
     private ArrayList<State> childsOfState(State state) {
@@ -291,28 +281,6 @@ public class AI {
         }
         return tempStateArray;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
