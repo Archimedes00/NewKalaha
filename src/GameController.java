@@ -28,7 +28,8 @@ public class GameController {
             } else {
                 State tempState = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
                 tempState.setStateArray(state.getStateArray());
-                int action = ai.minimax2(tempState, GameSettings.searchDepth);
+//                int action = ai.minimax2(tempState, GameSettings.searchDepth);
+                int action = ai.findBestMinimax(state);
                 state = playAITurn(state, action);
                 state.setHumanPlayerTurn(true);
                 System.out.println("\nAI played: B" + (action + 1));
@@ -129,12 +130,12 @@ public class GameController {
         }
 
         state.setStateArray(tempStateArray);
-        if ((action + pocketBuffer) % 13 == 6) {
-            System.out.println("You succesfully put your last piece in your store. You get another turn!");
-            drawBoard(state);
-
-            state = playTurn(state, chooseAction(state));
-        }
+//        if ((action + pocketBuffer) % 13 == 6) {
+//            System.out.println("You succesfully put your last piece in your store. You get another turn!");
+//            drawBoard(state);
+//
+//            state = playTurn(state, chooseAction(state));
+//        }
         return state;
     }
 
@@ -164,9 +165,10 @@ public class GameController {
         }
 
         state.setStateArray(tempStateArray);
-        if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
-            state = playAITurn(state, ai.minimax2(state, GameSettings.searchDepth));
-        }
+//        if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
+//            state = playAITurn(state, ai.findBestMinimax(state));
+////            state = playAITurn(state, ai.minimax2(state, GameSettings.searchDepth));
+//        }
         return state;
     }
 

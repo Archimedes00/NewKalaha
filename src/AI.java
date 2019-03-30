@@ -176,11 +176,11 @@ public class AI {
 
         state.setStateArray(tempStateArray);  /*   SKAL DET HER VÆRE HER!?   */
         // Tjekker om du rammer din sidste sten i din egen bank, for så at få en ekstra tur
-        if ((action + pocketBuffer) % 13 == 6) {
-            //System.out.println("You succesfully put your last piece in your store. You get another turn!");
-            state.setHumanPlayerTurn(true);
-            return state;
-        }
+//        if ((action + pocketBuffer) % 13 == 6) {
+//            //System.out.println("You succesfully put your last piece in your store. You get another turn!");
+//            state.setHumanPlayerTurn(true);
+//            return state;
+//        }
         state.setHumanPlayerTurn(false);
         return state;
     }
@@ -211,11 +211,11 @@ public class AI {
 
         state.setStateArray(tempStateArray); /*OG SKAL DET HER VÆRE HER YO!? */
 
-        if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
-            // Dette gøgl virker
-            state.setHumanPlayerTurn(false);
-            return state;
-        }
+//        if ((action + pocketBuffer + GameSettings.POCKETS + 1) % 14 == 13) {
+//            // Dette gøgl virker
+//            state.setHumanPlayerTurn(false);
+//            return state;
+//        }
 
         state.setHumanPlayerTurn(true);
         return state;
@@ -270,6 +270,38 @@ public class AI {
         return optimalAction(utilityArray);
     }
 
+    public int minimax3(State tempState, int depth, boolean maximizingPlayer) {
+//        tempState.setStateArray(state.getStateArray());
+
+
+        if (terminalTest(tempState, depth)) {
+            return utility(tempState);
+        }
+
+        if (maximizingPlayer) {
+
+            int maxEval = -99999;
+
+            for (State child : childsOfState(tempState)) {
+                int eval = minimax3(child, depth - 1, false);
+                maxEval = max(maxEval, eval);
+            }
+            System.out.println("maxEval = " + maxEval);
+            return maxEval;
+        } else {
+
+            int minEval = 99999;
+            for (State child : childsOfState(tempState)) {
+                int eval = minimax3(child, depth - 1, true);
+                minEval = min(minEval, eval);
+            }
+
+            System.out.println("minEval = " + minEval);
+            return minEval;
+
+        }
+    }
+
 
     private ArrayList<State> childsOfState(State state) {
         ArrayList<State> tempStateArray = new ArrayList<>();
@@ -282,5 +314,26 @@ public class AI {
         return tempStateArray;
     }
 
+    public int findBestMinimax(State state) {
+        State tempState = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
+        tempState.setStateArray(state.getStateArray());
+        State tempState2 = new State(GameSettings.bufferPlayers[0], GameSettings.bufferPlayers[1]);
+        tempState.setStateArray(state.getStateArray());
+
+
+        int bestMinimax = minimax3(tempState, 1000, true);
+        System.out.println("best Minimax: " + bestMinimax);
+        int action = -1;
+        for (int i = 0; i < 6; i++) {
+            tempState2 = playAITurnResult(tempState2, i);
+            System.out.println("i: "+ i);
+//            if (minimax3(tempState2, 1000, false) == bestMinimax)
+//                return i;
+            System.out.println(minimax3(tempState, 999, false));
+
+        }
+        System.out.println("Aciton = " + action);
+        return action;
+    }
 
 }
